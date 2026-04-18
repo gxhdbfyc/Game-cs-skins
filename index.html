@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>RICH CASE - Открытие кейсов CS2</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Заголовок -->
+    <header>
+        <a href="#" class="logo" onclick="showSection('cases'); return false;">
+            <span class="cs">RICH</span>
+            <span class="cases">CASE</span>
+        </a>
+        <div class="balance-container">
+            <div class="balance">
+                <span class="balance-icon">💰</span>
+                <span id="balance">1000.00</span>
+                <span class="currency" id="currencySymbol">$</span>
+            </div>
+            <button class="add-balance-btn" onclick="addBalance()">+</button>
+            <div class="currency-selector">
+                <button class="currency-btn" id="currencyBtn" onclick="toggleCurrencyMenu()">
+                    <span id="currentCurrency">USD</span> ▼
+                </button>
+                <div class="currency-menu" id="currencyMenu">
+                    <button onclick="setCurrency('USD')">$ USD</button>
+                    <button onclick="setCurrency('EUR')">€ EUR</button>
+                    <button onclick="setCurrency('RUB')">₽ RUB</button>
+                </div>
+            </div>
+        </div>
+        <nav>
+            <button class="nav-btn active" onclick="showSection('cases')">
+                <span class="icon">📦</span> Кейсы
+            </button>
+            <button class="nav-btn" onclick="showSection('inventory')">
+                <span class="icon">🎒</span> Инвентарь
+                <span class="inventory-count" id="inventoryCount">0</span>
+            </button>
+            <button class="nav-btn" onclick="showSection('stats')">
+                <span class="icon">📊</span> Статистика
+            </button>
+            <button class="nav-btn" onclick="showSection('achievements')">
+                <span class="icon">🏆</span> Ачивки
+                <span class="inventory-count" id="achievementsCount" style="background:#ffd700; color:#000; display:none">0</span>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Секция кейсов -->
+    <section id="casesSection" class="section active">
+        <h2 class="section-title">Выберите кейс</h2>
+        <div class="cases-grid" id="casesGrid">
+            <!-- Кейсы загрузятся через JS -->
+        </div>
+    </section>
+
+    <!-- Секция инвентаря -->
+    <section id="inventorySection" class="section">
+        <div class="inventory-header">
+            <h2 class="section-title">Ваш инвентарь <span id="inventoryLimitCount" style="font-size: 0.7em; opacity: 0.7; margin-left: 10px">0/50</span></h2>
+            <div class="inventory-actions">
+                <span class="inventory-value">Стоимость: <span id="inventoryValue">0.00</span></span>
+                <button class="sell-all-btn" onclick="sellAll()">Продать всё</button>
+            </div>
+        </div>
+        <div class="inventory-grid" id="inventoryGrid">
+            <!-- Предметы инвентаря загрузятся через JS -->
+        </div>
+        <div class="empty-inventory" id="emptyInventory">
+            <span class="empty-icon">📭</span>
+            <p>Ваш инвентарь пуст</p>
+            <button class="open-cases-btn" onclick="showSection('cases')">Открыть кейсы</button>
+        </div>
+    </section>
+
+    <!-- Секция статистики -->
+    <section id="statsSection" class="section">
+        <h2 class="section-title">Статистика</h2>
+        <div class="stats-container">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-icon">📦</span>
+                    <div class="stat-info">
+                        <h3 id="statCasesOpened">0</h3>
+                        <p>Кейсов открыто</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💰</span>
+                    <div class="stat-info">
+                        <h3 id="statMoneySpent">0.00</h3>
+                        <p>Потрачено на кейсы</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🏷️</span>
+                    <div class="stat-info">
+                        <h3 id="statItemsSold">0</h3>
+                        <p>Предметов продано</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">💵</span>
+                    <div class="stat-info">
+                        <h3 id="statMoneyEarned">0.00</h3>
+                        <p>Заработано с продаж</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-icon">🎁</span>
+                    <div class="stat-info">
+                        <h3 id="statItemsKept">0</h3>
+                        <p>Предметов в инвентаре</p>
+                    </div>
+                </div>
+                <div class="stat-card profit">
+                    <span class="stat-icon">📈</span>
+                    <div class="stat-info">
+                        <h3 id="statProfit">0.00</h3>
+                        <p>Общий профит</p>
+                    </div>
+                </div>
+            </div>
+            <div class="stats-details">
+                <h3>Редкость выпавших предметов</h3>
+                <div class="rarity-stats" id="rarityStats">
+                    <div class="rarity-bar">
+                        <span class="rarity-label consumer">Ширпотреб</span>
+                        <div class="rarity-progress"><div class="rarity-fill consumer" id="rarityConsumer"></div></div>
+                        <span class="rarity-count" id="countConsumer">0</span>
+                    </div>
+                    <div class="rarity-bar">
+                        <span class="rarity-label industrial">Промышленное</span>
+                        <div class="rarity-progress"><div class="rarity-fill industrial" id="rarityIndustrial"></div></div>
+                        <span class="rarity-count" id="countIndustrial">0</span>
+                    </div>
+                    <div class="rarity-bar">
+                        <span class="rarity-label mil-spec">Армейское</span>
+                        <div class="rarity-progress"><div class="rarity-fill mil-spec" id="rarityMilSpec"></div></div>
+                        <span class="rarity-count" id="countMilSpec">0</span>
+                    </div>
+                    <div class="rarity-bar">
+                        <span class="rarity-label restricted">Запрещённое</span>
+                        <div class="rarity-progress"><div class="rarity-fill restricted" id="rarityRestricted"></div></div>
+                        <span class="rarity-count" id="countRestricted">0</span>
+                    </div>
+                    <div class="rarity-bar">
+                        <span class="rarity-label classified">Засекреченное</span>
+                        <div class="rarity-progress"><div class="rarity-fill classified" id="rarityClassified"></div></div>
+                        <span class="rarity-count" id="countClassified">0</span>
+                    </div>
+                    <div class="rarity-bar">
+                        <span class="rarity-label covert">Тайное</span>
+                        <div class="rarity-progress"><div class="rarity-fill covert" id="rarityCovert"></div></div>
+                        <span class="rarity-count" id="countCovert">0</span>
+                    </div>
+                    <div class="rarity-bar">
+                        <span class="rarity-label rare">★ Редкое</span>
+                        <div class="rarity-progress"><div class="rarity-fill rare" id="rarityRare"></div></div>
+                        <span class="rarity-count" id="countRare">0</span>
+                    </div>
+                </div>
+                <button class="reset-stats-btn" onclick="resetStats()">Сбросить статистику</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Секция достижений -->
+    <section id="achievementsSection" class="section">
+        <div class="inventory-header">
+            <h2 class="section-title">Достижения</h2>
+            <div class="inventory-actions">
+                <span class="inventory-value">Получено: <span id="achievementsUnlockedCount">0</span>/<span id="achievementsTotalCount">0</span></span>
+            </div>
+        </div>
+        <div class="achievements-grid" id="achievementsGrid">
+            <!-- Достижения загрузятся через JS -->
+        </div>
+    </section>
+
+    <!-- Модальное окно открытия кейса -->
+    <div class="modal" id="caseModal">
+        <div class="modal-content case-opening-modal">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            
+            <div class="case-info">
+                <img id="modalCaseImage" src="" alt="Case">
+                <h3 id="modalCaseName"></h3>
+                <p class="case-price">Цена: <span id="modalCasePrice"></span><span id="modalCurrencySymbol"></span></p>
+            </div>
+
+            <!-- Рулетка -->
+            <div class="roulette-container" id="rouletteContainer">
+                <div class="roulette-pointer"></div>
+                <div class="roulette-track" id="rouletteTrack">
+                    <!-- Предметы рулетки генерируются через JS -->
+                </div>
+            </div>
+
+            <!-- Результат -->
+            <div class="win-display" id="winDisplay">
+                <div class="win-glow" id="winGlow"></div>
+                <img id="winImage" src="" alt="Won Item">
+                <h4 id="winName"></h4>
+                <p class="win-price">Стоимость: <span id="winPrice"></span><span id="winCurrencySymbol"></span></p>
+                <div class="win-actions">
+                    <button class="keep-btn" onclick="keepItem()">Оставить</button>
+                    <button class="sell-btn" onclick="sellWonItem()">Продать</button>
+                </div>
+            </div>
+
+            <!-- Содержимое кейса -->
+            <div class="case-contents" id="caseContents">
+                <h4>Содержимое кейса:</h4>
+                <div class="contents-grid" id="contentsGrid">
+                    <!-- Содержимое загрузится через JS -->
+                </div>
+            </div>
+
+            <div class="case-buttons">
+                <button class="open-case-btn" id="openCaseBtn">
+                    <span class="key-icon">🔑</span> Открыть кейс
+                </button>
+                <button class="open-case-btn fast" id="openCaseFastBtn">
+                    <span class="key-icon">⚡</span> Быстро
+                </button>
+                <button class="open-case-btn" id="openAgainBtn" style="display: none;">
+                    <span class="key-icon">🔄</span> Открыть ещё раз
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div class="notifications" id="notifications"></div>
+
+    <!-- Подвал -->
+    <footer>
+    <div class="footer-content">
+        <p class="footer-logo">RICH CASE</p>
+        <p class="footer-author">
+            Проект от ютубера 
+            <a 
+                href="https://www.youtube.com/@НейроРич" 
+                class="author-name" 
+                target="_blank" 
+                rel="noopener noreferrer"
+            >
+                Нейро Рич
+            </a>
+        </p>
+        <p class="footer-disclaimer">
+            Виртуальные предметы не имеют реальной ценности. Только для развлечения.
+        </p>
+    </div>
+</footer>
+
+
+    <script src="script.js"></script>
+</body>
+</html>
